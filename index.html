@@ -1,2 +1,490 @@
-<h1>Holas Este es el sitio web</h1>
-<p>por el momento no hay nada jajaj :P</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURA — Reproductor de Música</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #080810;
+      --surface: #0f0f1a;
+      --accent: #3DDC84;
+      --accent2: #2ab86a;
+      --text: #e8e8e8;
+      --muted: #6a6a6a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.12;
+      pointer-events: none;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 600px; height: 600px; background: #3DDC84; top: -100px; left: -150px; animation-delay: 0s; }
+    .orb-2 { width: 500px; height: 500px; background: #1a7a40; top: 40%; right: -100px; animation-delay: -4s; }
+    .orb-3 { width: 400px; height: 400px; background: #2ab86a; bottom: -100px; left: 30%; animation-delay: -8s; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.08); }
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 60px;
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(61,220,132,0.08);
+    }
+
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 40px;
+    }
+
+    nav ul a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    nav ul a:hover { color: var(--accent); }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 140px 40px 80px;
+      position: relative;
+    }
+
+    .hero-tag {
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(61,220,132,0.3);
+      padding: 6px 18px;
+      border-radius: 100px;
+      margin-bottom: 36px;
+      display: inline-block;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(5rem, 14vw, 11rem);
+      font-weight: 300;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+
+    .hero h1 span {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 32px auto 0;
+      line-height: 1.7;
+      font-weight: 400;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      margin-top: 48px;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .btn-primary {
+      padding: 14px 36px;
+      border-radius: 100px;
+      border: none;
+      background: var(--accent);
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: opacity 0.3s, transform 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-2px); }
+
+    .btn-outline {
+      padding: 14px 36px;
+      border-radius: 100px;
+      border: 1px solid rgba(61,220,132,0.3);
+      background: transparent;
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: border-color 0.3s, transform 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-outline:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .player-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 20px 40px 100px;
+    }
+
+    .player {
+      background: rgba(15,15,26,0.8);
+      border: 1px solid rgba(61,220,132,0.12);
+      border-radius: 28px;
+      padding: 36px;
+      width: 360px;
+      backdrop-filter: blur(30px);
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .album-art {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #0a1a0f, #0a2a15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+
+
+    .track-info { margin-bottom: 24px; }
+
+    .track-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .track-artist {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: rgba(61,220,132,0.15);
+      border-radius: 100px;
+      margin: 20px 0;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 38%;
+      background: var(--accent);
+      border-radius: 100px;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: -10px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      margin-top: 24px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: color 0.3s;
+      line-height: 1;
+    }
+
+    .ctrl-btn:hover { color: var(--text); }
+
+    .ctrl-play {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      color: #000;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .ctrl-play:hover { transform: scale(1.08); opacity: 0.9; }
+
+    .features {
+      padding: 100px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 64px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: rgba(15,15,26,0.6);
+      border: 1px solid rgba(61,220,132,0.08);
+      border-radius: 20px;
+      padding: 36px 30px;
+    }
+
+
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .cta {
+      text-align: center;
+      padding: 120px 40px;
+      position: relative;
+    }
+
+    .cta h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 300;
+      margin-bottom: 20px;
+    }
+
+    .cta p {
+      color: var(--muted);
+      margin-bottom: 48px;
+      font-size: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 32px;
+      border-top: 1px solid rgba(61,220,132,0.08);
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      nav ul { display: none; }
+      .features { padding: 80px 24px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .hero-btns { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <nav>
+    <div class="logo">AURA</div>
+    <ul>
+      <li><a href="#features">Funciones</a></li>
+      <li><a href="#cta">Descargar</a></li>
+      <li><a href="#footer">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <span class="hero-tag">Tu música, sin límites</span>
+    <h1>Solo tu<br /><span>música</span></h1>
+    <p>AURA es un reproductor de música local para Android. Sin algoritmos, sin anuncios, sin streaming — control total sobre tu biblioteca musical.</p>
+    <div class="hero-btns">
+      <a href="https://github.com/20MAKIOMAN20/AURA/releases" class="btn-primary">Descargar APK</a>
+      <a href="#features" class="btn-outline">Ver funciones</a>
+    </div>
+  </section>
+
+  <div class="player-wrap">
+    <div class="player">
+      <div class="album-art">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#3DDC84" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="position:relative;z-index:1"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      </div>
+      <div class="track-info">
+        <div class="track-name">Tu canción favorita</div>
+        <div class="track-artist">Tu artista favorito</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+      <div class="time-row">
+        <span>1:24</span>
+        <span>3:47</span>
+      </div>
+      <div class="controls">
+        <button class="ctrl-btn">&#9664;&#9664;</button>
+        <button class="ctrl-btn">&#9664;</button>
+        <button class="ctrl-play">&#9654;</button>
+        <button class="ctrl-btn">&#9654;</button>
+        <button class="ctrl-btn">&#9654;&#9654;</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="features" id="features">
+    <div class="section-label">Por qué AURA</div>
+    <div class="section-title">Todo lo que<br />necesitas</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3DDC84" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>Reproducción local</h3>
+        <p>Carga y reproduce música directamente desde tu dispositivo. Soporta MP3, FLAC, OPUS, M4A, OGG y WAV.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3DDC84" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <h3>Sección de Artistas</h3>
+        <p>Explora tu biblioteca por artistas en vista grid con fotos reales obtenidas automáticamente vía Deezer.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3DDC84" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+        <h3>Playlists personalizadas</h3>
+        <p>Crea y gestiona tus propias playlists. Agrega o elimina canciones cuando quieras.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3DDC84" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+        <h3>Cola de reproducción</h3>
+        <p>Gestiona tu cola con drag & drop. Reorganiza, elimina canciones o salta a cualquier pista.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3DDC84" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h3>Carga ultrarrápida</h3>
+        <p>Caché inteligente de metadatos para que tu biblioteca cargue instantáneamente desde la segunda apertura.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3DDC84" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+        <h3>Notificación multimedia</h3>
+        <p>Controla la reproducción desde la barra de notificaciones sin necesidad de abrir la app.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="cta">
+    <h2>Tu música,<br /><em>como debe ser</em></h2>
+    <p>Descarga AURA gratis y toma el control de tu biblioteca musical.</p>
+    <a href="https://github.com/20MAKIOMAN20/AURA/releases" class="btn-primary">Descargar AURA — Es gratis</a>
+  </section>
+
+  <footer id="footer">
+    © 2026 AURA &nbsp;·&nbsp; Desarrollado por <a href="mailto:20MAKIOMAN20@proton.me">20MAKIOMAN20</a> &nbsp;·&nbsp; Música que sientes
+  </footer>
+
+</body>
+</html>
